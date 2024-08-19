@@ -5,28 +5,14 @@ on: [push]
 jobs:
   semantic-pull-request:
     name: "Semantic"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Semantic Pull Request
-        uses: amannn/action-semantic-pull-request@v3
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
   analyze:
     name: "Analyze"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          flutter-version: 3.24.0
-      - name: Install Dependencies
-        run: flutter pub get
-      - name: Analyze
-        run: flutter analyze
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    with:
+      flutter_channel: stable
+      flutter_version: 2.24.0
 
   build:
     name: Build
