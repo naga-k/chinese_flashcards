@@ -12,7 +12,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
       flutter_channel: stable
-      flutter_version: 3.24.0
+      flutter_version: 3.3.8
 
   build:
     name: Build
@@ -32,9 +32,9 @@ jobs:
           very_good --analytics false
           very_good packages get --recursive
       - name: 🛠️ Build the application
-        run: flutter build web -t lib/main        git add .github/workflows/firebase-deploy.yml.dart
+        run: flutter build web -t lib/main_production.dart
       - name: ⬇️ Archive Production Artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           name: build
           path: build/web
@@ -47,7 +47,7 @@ jobs:
       - name: 📚 Checkout repo
         uses: actions/checkout@v3
       - name: ⬇️ Download Artifact
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v3
         with:
           name: build
           path: build/web
