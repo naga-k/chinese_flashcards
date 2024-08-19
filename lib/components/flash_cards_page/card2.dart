@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flashcard/animations/half_flip_animation.dart';
 import 'package:flashcard/animations/slide_animation.dart';
+import 'package:flashcard/components/flash_cards_page/card_display.dart';
 import 'package:flashcard/decorations/flashcard_decoration.dart';
 import 'package:flashcard/enum/slide_direction.dart';
 import 'package:flashcard/notifiers/flashcards_notifier.dart';
@@ -57,7 +58,7 @@ class Card2 extends StatelessWidget {
                   child: Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.rotationY(pi),
-                      child: Text(notifier.word2.character)),
+                      child: const CardDisplay(isCard1: false)),
                 ),
               ),
             ),

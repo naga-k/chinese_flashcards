@@ -1,5 +1,6 @@
 import 'package:flashcard/animations/half_flip_animation.dart';
 import 'package:flashcard/animations/slide_animation.dart';
+import 'package:flashcard/components/flash_cards_page/card_display.dart';
 import 'package:flashcard/decorations/flashcard_decoration.dart';
 import 'package:flashcard/enum/slide_direction.dart';
 import 'package:flashcard/notifiers/flashcards_notifier.dart';
@@ -42,7 +43,7 @@ class Card1 extends StatelessWidget {
                 width: size.width * 0.9,
                 height: size.height * 0.7,
                 decoration: flashcardDecoration(context),
-                child: Text(notifier.word1.english),
+                child: const CardDisplay(isCard1: true),
               ),
             ),
           ),

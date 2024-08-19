@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class FlashcardsNotifier extends ChangeNotifier {
   String _topic = '';
-  Word word1 = Word(topic: "", english: "", character: "", pinyin: "");
+  Word word1 =
+      Word(topic: "", english: "Loading Arrow", character: "", pinyin: "");
   Word word2 = Word(topic: "", english: "", character: "", pinyin: "");
   List<Word> selectedWords = [];
 
@@ -27,11 +28,16 @@ class FlashcardsNotifier extends ChangeNotifier {
   }
 
   generateCurrentWord() {
+    if (selectedWords.isEmpty) {
+      generateAllSelectedWords();
+    }
+
     if (selectedWords.isNotEmpty) {
       final r = Random().nextInt(selectedWords.length);
       word1 = selectedWords[r];
       selectedWords.removeAt(r);
-    } else {}
+    }
+
     Future.delayed(const Duration(milliseconds: kSlideAwayDuration), () {
       word2 = word1;
     });
