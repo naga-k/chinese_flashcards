@@ -16,7 +16,6 @@ class TopicTile extends StatelessWidget {
     return FadeInAnimation(
       child: GestureDetector(
         onTap: () {
-          print('Topic: $_topic');
           loadSession(context, _topic);
         },
         child: Container(

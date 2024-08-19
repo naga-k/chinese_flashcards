@@ -9,13 +9,17 @@ class SlideAnimation extends StatefulWidget {
       required this.direction,
       required this.animate,
       this.reset,
-      this.animationCompleted});
+      this.animationCompleted,
+      this.animationDuration = kSlideAwayDuration,
+      this.animationDelay = 0});
 
   final Widget child;
   final SlideDirection direction;
   final bool animate;
   final bool? reset;
   final VoidCallback? animationCompleted;
+  final int animationDuration;
+  final int animationDelay;
 
   @override
   State<SlideAnimation> createState() => _SlideAnimationState();
@@ -29,26 +33,31 @@ class _SlideAnimationState extends State<SlideAnimation>
   void initState() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: kSlideAwayDuration),
+      duration: Duration(milliseconds: widget.animationDuration),
     )..addListener(() {
         if (_animationController.status == AnimationStatus.completed) {
           widget.animationCompleted?.call();
         }
       });
 
-    if (widget.animate) {
-      _animationController.forward();
-    }
     super.initState();
   }
 
   @override
   didUpdateWidget(SlideAnimation oldWidget) {
-    if (widget.reset!) {
+    if (widget.reset == true) {
       _animationController.reset();
     }
     if (widget.animate) {
-      _animationController.forward();
+      if (widget.animationDelay > 0) {
+        Future.delayed(Duration(milliseconds: widget.animationDelay), () {
+          if (mounted) {
+            _animationController.forward();
+          }
+        });
+      } else {
+        _animationController.forward();
+      }
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -62,35 +71,44 @@ class _SlideAnimationState extends State<SlideAnimation>
   @override
   Widget build(BuildContext context) {
     late final Animation<Offset> animation;
+
     Tween<Offset> tween;
 
     switch (widget.direction) {
       case SlideDirection.leftAway:
-        tween = Tween<Offset>(
-            begin: const Offset(0.0, 0.0), end: const Offset(-1.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(0, 0), end: const Offset(-1, 0));
+
         break;
 
       case SlideDirection.rightAway:
-        tween = Tween<Offset>(
-            begin: const Offset(0.0, 0.0), end: const Offset(1.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(0, 0), end: const Offset(1, 0));
+
         break;
 
       case SlideDirection.leftIn:
-        tween = Tween<Offset>(
-            begin: const Offset(-1.0, 0.0), end: const Offset(0.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(-1, 0), end: const Offset(0, 0));
+
         break;
+
       case SlideDirection.rightIn:
-        tween = Tween<Offset>(
-            begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(1, 0), end: const Offset(0, 0));
+
         break;
 
       case SlideDirection.upIn:
-        tween = Tween<Offset>(
-            begin: const Offset(0.0, 1.0), end: const Offset(0.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0));
+
         break;
+
       case SlideDirection.none:
-        tween = Tween<Offset>(
-            begin: const Offset(0.0, 0.0), end: const Offset(0.0, 0.0));
+        tween =
+            Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 0));
+
         break;
     }
 
