@@ -19,7 +19,7 @@ jobs:
           flutter pub global activate very_good_cli
           very_good packages get --recursive
       - name: Build the application
-        run: flutter build web -t lib/main.dart -v
+        run: flutter build web
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v3
         with:
