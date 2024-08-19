@@ -32,6 +32,8 @@ class Card1 extends StatelessWidget {
             notifier.runFlipCard2();
           },
           child: SlideAnimation(
+            animationDuration: 1000,
+            animationDelay: 200,
             animationCompleted: () {
               notifier.setIgnoreTouches(ignore: false);
             },
