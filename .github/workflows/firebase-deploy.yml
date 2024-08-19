@@ -1,42 +1,63 @@
-name: Deploy to Firebase Hosting
+name: Analyze, Build and Deploy
 
-on:
-  push:
-    branches:
-      - debug-firebase-deploy # Change to the new branch name
+on: [push]
 
 jobs:
+  semantic-pull-request:
+    name: "Semantic"
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
+
+  analyze:
+    name: "Analyze"
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
+    with:
+      flutter_channel: stable
+      flutter_version: 3.24.0
+
   build:
+    name: Build
+    needs: [semantic-pull-request, analyze]
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v3
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: 3.24.0
+      - name: 📦 Install Dependencies
+        run: |
+          flutter pub global activate very_good_cli
+          very_good --analytics false
+          very_good packages get --recursive
+      - name: 🛠️ Build the application
+        run: flutter build web -t lib/main.dart
+      - name: ⬇️ Archive Production Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: build/web
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.0' # Specify the known stable version of Flutter
-
-    - name: Install dependencies
-      run: flutter pub get
-
-    - name: Build Flutter web app
-      run: flutter build web --release
-
-    - name: Verify build output
-      run: |
-        echo "Contents of build/web directory:"
-        ls -la build/web
-
-    - name: Deploy to Firebase
-      if: success()
-      env:
-        FIREBASE_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-        FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-      run: |
-        echo $FIREBASE_SERVICE_ACCOUNT > ${HOME}/gcloud-service-key.json
-        gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-        gcloud --quiet config set project $FIREBASE_PROJECT_ID
-        npm install -g firebase-tools
-        firebase deploy --only hosting --public build/web
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 📚 Checkout repo
+        uses: actions/checkout@v3
+      - name: ⬇️ Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: build
+          path: build/web
+      - name: 🎯 Deploy to firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          echo $FIREBASE_SERVICE_ACCOUNT > ${HOME}/gcloud-service-key.json
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          gcloud --quiet config set project $FIREBASE_PROJECT_ID
+          npm install -g firebase-tools
+          firebase deploy --only hosting --public build/web
