@@ -15,12 +15,13 @@ jobs:
         with:
           channel: "stable"
           flutter-version: 3.24.0
-      
+
       - name: Enable Flutter Web Support
         run: flutter config --enable-web
       
       - name: Install Dependencies
         run: |
+          flutter pub get
           flutter pub global activate very_good_cli
           very_good packages get --recursive
       
