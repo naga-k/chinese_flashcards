@@ -28,14 +28,11 @@ class FlashcardsNotifier extends ChangeNotifier {
 
   generateCurrentWord() {
     if (selectedWords.isNotEmpty) {
-      print(selectedWords.length);
       final r = Random().nextInt(selectedWords.length);
       word1 = selectedWords[r];
       selectedWords.removeAt(r);
-    } else {
-      print("No more words");
-    }
-    Future.delayed(Duration(milliseconds: kSlideAwayDuration), () {
+    } else {}
+    Future.delayed(const Duration(milliseconds: kSlideAwayDuration), () {
       word2 = word1;
     });
   }

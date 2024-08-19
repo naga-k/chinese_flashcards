@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flashcard/animations/half_flip_animation.dart';
 import 'package:flashcard/animations/slide_animation.dart';
-import 'package:flashcard/configs/constants.dart';
 import 'package:flashcard/decorations/flashcard_decoration.dart';
 import 'package:flashcard/enum/slide_direction.dart';
 import 'package:flashcard/notifiers/flashcards_notifier.dart';
